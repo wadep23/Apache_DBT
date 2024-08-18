@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:13
+    container_name: postgres_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    networks:
+      - etl_network
+  
+  airflow:
+    image: apache/airflow:slim-2.10.0
+    env_file:
+      - .env
+    depends_on:
+      - postgres_db
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    networks:
+      - etl_network
+  
+  dbt:
+    image: ghcr.io/dbt-labs/dbt-core:1.6.17
+    volumes:
+      - ./dbt:/usr/app
+    networks:
+      - etl_network
+  
+volumes:
+  postgres_data:
+networks:
+  etl_network:

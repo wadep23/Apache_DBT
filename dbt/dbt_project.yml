@@ -1,0 +1,12 @@
+default:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: postgres
+      user: airflow
+      password: airflow
+      dbname: airflow
+      schema: public
+      port: 5432
+      threads: 4
